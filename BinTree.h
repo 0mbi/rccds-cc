@@ -190,7 +190,7 @@ void pikz_BinTree( BinTree<T> *root, bool start = false )
 
 template <class T>
 void delete_BinTree( BinTree<T> * root ) {
-  if( (root == NULL) || (root == NULL) )
+  if( root == NULL )
     return;
   if( root->left != NULL || root->right != NULL ) {
     if( root->left != NULL ) 
@@ -204,6 +204,7 @@ void delete_BinTree( BinTree<T> * root ) {
     }     
     BinTree<T> * left = root->left;
     BinTree<T> * right = root->right;
+
     delete root;
     root = NULL;
 
@@ -211,6 +212,14 @@ void delete_BinTree( BinTree<T> * root ) {
       delete_BinTree(left);
     if( right != NULL )
       delete_BinTree(right);
+  } else {
+    if( root->parent != NULL ) 
+    {
+      delete root->parent;
+      root->parent = NULL;
+    }     
+    delete root;
+    root = NULL;    
   }
 
 }
