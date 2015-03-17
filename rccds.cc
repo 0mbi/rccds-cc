@@ -248,9 +248,11 @@ void fast_rsd_decomp( chord_t* &dest1, int* size1, chord_t* &dest2, int* size2, 
   fast_get_connected_components(comp,&comp_num,src_rem1,src_size-1);
   if( comp_num == 1 )
     {
-      dest1 = &src[0];
+      dest1 = new chord_t;
+      memcpy( dest1, src, sizeof(chord_t));
       *size1 = 1;
-      dest2 = src_rem1;
+      dest2 = new chord_t [src_size-1];
+      memcpy( dest2, src_rem1, sizeof(chord_t)*(src_size-1)) ;
       *size2 = src_size-1;
       *index = dest1[0].second - 2;
     }
@@ -263,23 +265,23 @@ void fast_rsd_decomp( chord_t* &dest1, int* size1, chord_t* &dest2, int* size2, 
       int size_2 = 0;
       temp_dest1[size_1++] = src[0];
       for( int i = 0 ; i < (src_size-1)*(src_size-1) ; i++ )
-	{
-	  if( (i%(src_size-1))==0 && comp[i] == EMPTY_CHORD )
-	    break;
-	  if( (i%(src_size-1))==0 );
-	  if( comp[i] == EMPTY_CHORD ) {
-	    continue;
-	  }
-	  if( comp[i].id == 0 ) continue;
-	  if( (i/(src_size-1)) == 0 )
-	    {
-	      temp_dest2[size_2++] = comp[i];
-	    }
-	  else
-	    {
-	      temp_dest1[size_1++] = comp[i];
-	    }
-	}
+	     {
+	       if( (i%(src_size-1))==0 && comp[i] == EMPTY_CHORD )
+	         break;
+	       if( (i%(src_size-1))==0 );
+	       if( comp[i] == EMPTY_CHORD ) {
+	       continue;
+	       }
+	       if( comp[i].id == 0 ) continue;
+	       if( (i/(src_size-1)) == 0 )
+	       {
+  	      temp_dest2[size_2++] = comp[i];
+	       }
+	       else
+	       {
+	         temp_dest1[size_1++] = comp[i];
+	       }
+	     }
       dest1 = new chord_t[size_1];
       dest2 = new chord_t[size_2];
 
@@ -298,12 +300,11 @@ void fast_rsd_decomp( chord_t* &dest1, int* size1, chord_t* &dest2, int* size2, 
       
       delete [] temp_dest1;
       delete [] temp_dest2;
-      delete [] src_rem1;
+
       
     }
-  
+  delete [] src_rem1;  
   delete [] comp;
-
 }
 
 // this is quite crappy and depends that fast_rem1 and fast_get_connected_components do not call by reference but by value
@@ -411,7 +412,24 @@ BinTree<int>*  fast_build_int_tree( chord_t *src, int size )
   lnode->parent = iroot; rnode->parent = iroot;
   iroot->left = lnode; iroot->right = rnode;
 
-
+  if( first != NULL )
+  {
+//    cout << "First: " << first << endl;
+    if( size1 == 1 ) 
+      delete first;
+    else {
+      delete [] first;
+      first = NULL;
+    }
+    // cout << "First: " << first << endl;
+  }
+  if( second != NULL )
+  {
+    // cout << "second: " << second << endl;
+    delete [] second;
+    second = NULL;
+    // cout << "second: " << second << endl;
+  }
   return iroot;
 }
 
