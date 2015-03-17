@@ -303,6 +303,7 @@ void fast_rsd_decomp( chord_t* &dest1, int* size1, chord_t* &dest2, int* size2, 
     }
   
   delete [] comp;
+
 }
 
 // this is quite crappy and depends that fast_rem1 and fast_get_connected_components do not call by reference but by value
@@ -383,52 +384,62 @@ void fast_modify_to_intersection_order( chord_t *dest, int dest_size, chord_t* c
     }  
 }
 
-void  fast_build_int_tree( bt**pool, bt** root, chord_t *src, int size )
+
+BinTree<int>*  fast_build_int_tree( chord_t *src, int size )
 {
   chord_t *first = NULL; chord_t *second = NULL;
   int size1 = 0; int size2 = 0;
   int index = 0;
   fast_vertex_normalize(src,size); // vertex normalize
   fast_rsd_decomp(first,&size1,second,&size2,&index,src,size);
-  bt* lnode;
-  bt *rnode;
-  *root = bt_new_node(pool,NULL,NULL,NULL,index);
-  if( size1 == 1 )
-    {
-      lnode = bt_new_node(pool,NULL,NULL,NULL,first[0].id);
-    }
-  else
-    {
-      fast_build_int_tree(pool,&lnode,first,size1);
-    }
-  if( size2 == 1 )
-    {
+  BinTree<int>* iroot = mk_BinTree_ptr<int>(NULL,NULL,NULL,index);
+  BinTree<int>* lnode; 
+  BinTree<int>* rnode; 
+  if( size1 == 1 ) {
+    lnode = mk_BinTree_ptr<int>(NULL,NULL,NULL,first[0].id);
+  }
+  else {
+    lnode = fast_build_int_tree(first,size1);
+  }
+  if( size2 == 1 ) {
+    rnode = mk_BinTree_ptr<int>(NULL,NULL,NULL,second[0].id);
+  }
+  else { 
+    rnode = fast_build_int_tree(second,size2);
+  }
 
-      rnode = bt_new_node(pool,NULL,NULL,NULL,second[0].id);
-    }
-  else
-    {
-      fast_build_int_tree(pool,&rnode,second,size2);
-    }
+  lnode->parent = iroot; rnode->parent = iroot;
+  iroot->left = lnode; iroot->right = rnode;
 
-  lnode->parent = *root; rnode->parent = *root;
-  (*root)->left = lnode; (*root)->right = rnode;
 
+  return iroot;
 }
 
-void insert_at( bt** pool, bt* left, bt** right, int n)
+
+BinTree<int>* insert_at( BinTree<int>* left, BinTree<int>* right, int n )
 {
-  bt_insert_at_nth_pre(pool,right,left,n,0);
+  // copy right to rval
+  // debugging
+  BinTree<int>* rval = getBinTree<int>::copy(right);
+  // run insert_at_nth_pre(rval,left,n)
+  insert_at_nth_pre(&rval,left,n,0);
+  
+  return rval;
 }
 
-void get_insertion_tree( bt** pool, bt** target, bt** node )
+
+BinTree<int>* get_insertion_tree( BinTree<int>* node )
 {
-  if( *node == NULL ) return;
-  if( bt_is_leaf(*node) )
-    {
-      
-    }
+  if( node == NULL )
+    return NULL;
+  if( getBinTree<int>::isLeaf(node) ) 
+    return getBinTree<int>::copy(node);
+  return insert_at(
+       get_insertion_tree(node->left),
+       get_insertion_tree(node->right),
+       node->data);
 }
+
 
 void get_intersection_terminals( chord_t *dest, int dest_size, chord_t* c, int size, int* label, vector<int> *terminals, int *num_term )
 {

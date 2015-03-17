@@ -10,12 +10,13 @@
 #include <iomanip>
 #include <vector>
 #include <bitset>
-// #include "BinTree.h"
-#include "bintree.h"
+#include "BinTree.h"
+
 #include <string.h> 
 
 using namespace std;
-using namespace jeschli;
+//using namespace jeschli;
+using namespace markus;
 
 /*
  * chord_t chord type
@@ -50,14 +51,24 @@ using namespace jeschli;
   void fast_get_connected_components( chord_t *, int *, chord_t *, int );
   void fast_vertex_normalize( chord_t *, int );
   void fast_rsd_decomp( chord_t* &, int* , chord_t* &, int* , int* , chord_t* , int );
+  /*
+  Following method needs to be called like this:
+  int label = 0;
+  int num_term = 0;
+  vector<int> terminals(CHORDS-1);
+
+  get_intersection_terminals( chord_array, CHORDS, chord_array, CHORDS, &label, &terminals, &num_term );
+  */
   void get_intersection_terminals( chord_t *dest, int dest_size, chord_t* c, int size, int* label, vector<int> *terminals, int *num_term );
 
   typedef unsigned long long myint;
   void get_intersection_terminals_bitmask( chord_t   *dest, int dest_size, chord_t* c, int size, int *label, myint *bitmask );
 
-  void fast_build_int_tree( bt**,bt**,chord_t*,int);
-  void insert_at( bt** , bt*,  bt** , int );
-  bt* get_insertion_tree( bt* );
+  
+  BinTree<int>* fast_build_int_tree( chord_t *, int );
+  BinTree<int>* insert_at( BinTree<int>* , BinTree<int>* , int );
+  BinTree<int>* get_insertion_tree( BinTree<int>* );
+
 
   void generate_diagrams( set<int> , diagram_t& , void *(*)(diagram_t*) );
 
