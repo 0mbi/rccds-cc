@@ -412,23 +412,26 @@ BinTree<int>*  fast_build_int_tree( chord_t *src, int size )
   lnode->parent = iroot; rnode->parent = iroot;
   iroot->left = lnode; iroot->right = rnode;
 
+// cleanup the memory allocated by fast_rsd_decomp
   if( first != NULL )
   {
-//    cout << "First: " << first << endl;
     if( size1 == 1 ) 
       delete first;
     else {
       delete [] first;
       first = NULL;
     }
-    // cout << "First: " << first << endl;
   }
   if( second != NULL )
   {
-    // cout << "second: " << second << endl;
-    delete [] second;
+
+    // if( size2 == 1) // leads to invalid free/delete?!
+    // {
+    //   delete second;
+    // }
+    // else 
+      delete [] second;
     second = NULL;
-    // cout << "second: " << second << endl;
   }
   return iroot;
 }
@@ -438,10 +441,21 @@ BinTree<int>* insert_at( BinTree<int>* left, BinTree<int>* right, int n )
 {
   // copy right to rval
   // debugging
+  cout << "Insert: " ;
+  // cout << "Right node: " << right << endl;
   BinTree<int>* rval = getBinTree<int>::copy(right);
+   // BinTree<int>* rval = right;
+  print_pre_BinTree<int>( left );
+  cout << " at " << n << " into " ;
+  print_pre_BinTree<int>( rval );
+  cout << endl;
+ 
   // run insert_at_nth_pre(rval,left,n)
   insert_at_nth_pre(&rval,left,n,0);
-  
+  cout << "Results in ";
+    print_pre_BinTree<int>( rval );
+  cout << endl;
+
   return rval;
 }
 
@@ -450,8 +464,10 @@ BinTree<int>* get_insertion_tree( BinTree<int>* node )
 {
   if( node == NULL )
     return NULL;
-  if( getBinTree<int>::isLeaf(node) ) 
-    return getBinTree<int>::copy(node);
+  if( getBinTree<int>::isLeaf(node) ) {
+    // return getBinTree<int>::copy(node);
+   return mk_BinTree_ptr<int>(NULL,NULL,NULL,node->data);
+  }
   return insert_at(
        get_insertion_tree(node->left),
        get_insertion_tree(node->right),
