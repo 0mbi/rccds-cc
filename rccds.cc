@@ -386,27 +386,27 @@ void fast_modify_to_intersection_order( chord_t *dest, int dest_size, chord_t* c
 }
 
 
-BinTree<int>*  fast_build_int_tree( chord_t *src, int size )
+BinTree<int>* fast_build_int_tree( BinTreeManager<int>& btm, chord_t *src, int size )
 {
   chord_t *first = NULL; chord_t *second = NULL;
   int size1 = 0; int size2 = 0;
   int index = 0;
   fast_vertex_normalize(src,size); // vertex normalize
   fast_rsd_decomp(first,&size1,second,&size2,&index,src,size);
-  BinTree<int>* iroot = mk_BinTree_ptr<int>(NULL,NULL,NULL,index);
+  BinTree<int>* iroot = btm.mk_BinTree_ptr(NULL,NULL,NULL,index);
   BinTree<int>* lnode; 
   BinTree<int>* rnode; 
   if( size1 == 1 ) {
-    lnode = mk_BinTree_ptr<int>(NULL,NULL,NULL,first[0].id);
+    lnode = btm.mk_BinTree_ptr(NULL,NULL,NULL,first[0].id);
   }
   else {
-    lnode = fast_build_int_tree(first,size1);
+    lnode = fast_build_int_tree(btm,first,size1);
   }
   if( size2 == 1 ) {
-    rnode = mk_BinTree_ptr<int>(NULL,NULL,NULL,second[0].id);
+    rnode = btm.mk_BinTree_ptr(NULL,NULL,NULL,second[0].id);
   }
   else { 
-    rnode = fast_build_int_tree(second,size2);
+    rnode = fast_build_int_tree(btm,second,size2);
   }
 
   lnode->parent = iroot; rnode->parent = iroot;
@@ -437,40 +437,32 @@ BinTree<int>*  fast_build_int_tree( chord_t *src, int size )
 }
 
 
-BinTree<int>* insert_at( BinTree<int>* left, BinTree<int>* right, int n )
+BinTree<int>* insert_at( BinTreeManager<int>& btm, BinTree<int>* left, BinTree<int>* right, int n )
 {
   // copy right to rval
   // debugging
   cout << "Insert: " ;
   // cout << "Right node: " << right << endl;
-  BinTree<int>* rval = getBinTree<int>::copy(right);
+  BinTree<int>* rval = btm.copy(right);
    // BinTree<int>* rval = right;
-  print_pre_BinTree<int>( left );
-  cout << " at " << n << " into " ;
-  print_pre_BinTree<int>( rval );
-  cout << endl;
  
   // run insert_at_nth_pre(rval,left,n)
-  insert_at_nth_pre(&rval,left,n,0);
-  cout << "Results in ";
-    print_pre_BinTree<int>( rval );
-  cout << endl;
+  insert_at_nth_pre(btm,&rval,left,n,0);
 
   return rval;
 }
 
 
-BinTree<int>* get_insertion_tree( BinTree<int>* node )
+BinTree<int>* get_insertion_tree( BinTreeManager<int>& btm, BinTree<int>* node )
 {
   if( node == NULL )
     return NULL;
-  if( getBinTree<int>::isLeaf(node) ) {
-    // return getBinTree<int>::copy(node);
-   return mk_BinTree_ptr<int>(NULL,NULL,NULL,node->data);
+  if( isLeaf(node) ) {
+   return btm.copy(node);
   }
-  return insert_at(
-       get_insertion_tree(node->left),
-       get_insertion_tree(node->right),
+  return insert_at(btm,
+       get_insertion_tree(btm,node->left),
+       get_insertion_tree(btm,node->right),
        node->data);
 }
 

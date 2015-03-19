@@ -25,12 +25,12 @@ int main(int argc, char const *argv[])
     }
     int size1 = 0; int size2 = 0;
     int index = 0;
-    BinTree<int>* int_tree = fast_build_int_tree(d,4);
-    BinTree<int>* ins_tree = get_insertion_tree(int_tree);
+    BinTreeManager<int> btm;
+    BinTree<int>* int_tree = fast_build_int_tree(btm,d,4);
+    BinTree<int>* ins_tree = get_insertion_tree(btm,int_tree);
     print_pre_BinTree<int>( int_tree );
     print_pre_BinTree<int>( ins_tree );
-    delete_BinTree<int>(int_tree);
-    delete_BinTree<int>(ins_tree);
+
   }  
   cout << endl;
 

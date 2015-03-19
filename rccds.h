@@ -65,9 +65,9 @@ using namespace markus;
   void get_intersection_terminals_bitmask( chord_t   *dest, int dest_size, chord_t* c, int size, int *label, myint *bitmask );
 
   
-  BinTree<int>* fast_build_int_tree( chord_t *, int );
-  BinTree<int>* insert_at( BinTree<int>* , BinTree<int>* , int );
-  BinTree<int>* get_insertion_tree( BinTree<int>* );
+  BinTree<int>* fast_build_int_tree( BinTreeManager<int>& , chord_t *, int );
+  BinTree<int>* insert_at(BinTreeManager<int>&,  BinTree<int>* , BinTree<int>* , int );
+  BinTree<int>* get_insertion_tree( BinTreeManager<int>&, BinTree<int>* );
 
 
   void generate_diagrams( set<int> , diagram_t& , void *(*)(diagram_t*) );
