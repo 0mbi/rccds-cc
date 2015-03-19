@@ -68,7 +68,7 @@ using namespace markus;
   BinTree<int>* fast_build_int_tree( BinTreeManager<int>& , chord_t *, int );
   BinTree<int>* insert_at(BinTreeManager<int>&,  BinTree<int>* , BinTree<int>* , int );
   BinTree<int>* get_insertion_tree( BinTreeManager<int>&, BinTree<int>* );
-
+  void get_ld_map( map<int,int> *, BinTree<int>*, int );
 
   void generate_diagrams( set<int> , diagram_t& , void *(*)(diagram_t*) );
 

@@ -424,12 +424,6 @@ BinTree<int>* fast_build_int_tree( BinTreeManager<int>& btm, chord_t *src, int s
   }
   if( second != NULL )
   {
-
-    // if( size2 == 1) // leads to invalid free/delete?!
-    // {
-    //   delete second;
-    // }
-    // else 
       delete [] second;
     second = NULL;
   }
@@ -439,14 +433,7 @@ BinTree<int>* fast_build_int_tree( BinTreeManager<int>& btm, chord_t *src, int s
 
 BinTree<int>* insert_at( BinTreeManager<int>& btm, BinTree<int>* left, BinTree<int>* right, int n )
 {
-  // copy right to rval
-  // debugging
-  cout << "Insert: " ;
-  // cout << "Right node: " << right << endl;
   BinTree<int>* rval = btm.copy(right);
-   // BinTree<int>* rval = right;
- 
-  // run insert_at_nth_pre(rval,left,n)
   insert_at_nth_pre(btm,&rval,left,n,0);
 
   return rval;
@@ -523,4 +510,28 @@ void get_intersection_terminals( chord_t *dest, int dest_size, chord_t* c, int s
         }
 
     }
+  }
+
+void get_ld_map( map<int,int> *mp, BinTree<int>* node, int counter )
+{
+  if( node == NULL ) return;
+  if( isLeaf<int>(node) )
+    {
+      pair<int,int> p;
+      p.first = node->data;
+      p.second = counter;
+      mp->insert(p);
+      return;
+    }
+  if( node->right != NULL )
+    {
+      get_ld_map(mp,node->right,++counter);
+    }
+  if( node->left != NULL )
+    {
+      counter = 0;
+      get_ld_map(mp,node->left,counter);
+    }
+
 }
+

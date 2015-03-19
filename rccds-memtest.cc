@@ -1,7 +1,9 @@
 #include "rccds.h"
 #include <iostream>
+#include <map>
 
 typedef vector<chord_t> diagram_t;
+
 int main(int argc, char const *argv[])
 {
   struct timespec tstart={0,0}, tend={0,0};
@@ -28,9 +30,12 @@ int main(int argc, char const *argv[])
     BinTreeManager<int> btm;
     BinTree<int>* int_tree = fast_build_int_tree(btm,d,4);
     BinTree<int>* ins_tree = get_insertion_tree(btm,int_tree);
-    print_pre_BinTree<int>( int_tree );
-    print_pre_BinTree<int>( ins_tree );
-
+    map<int,int> bl_map;
+    get_ld_map(&bl_map,ins_tree,0);
+    for( map<int,int>::iterator i = bl_map.begin() ; i != bl_map.end() ; i++ )
+    {
+      cout << i->first << " " << i->second << endl;
+    }
   }  
   cout << endl;
 
