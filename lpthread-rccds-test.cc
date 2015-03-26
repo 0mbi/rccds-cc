@@ -1,92 +1,12 @@
 #include "rccds.h"
 #include <pthread.h>
 #include <iostream>
+#include "tbl_counter.h"
 
 typedef vector<chord_t> diagram_t;
 
 unsigned int total = 0;
 
-typedef vector<int> terminal_t;
-typedef map<int,int> blv_t;
-typedef pair<blv_t,int> blv_int_pair;
-typedef map< terminal_t, map<blv_t, int> > tbl_map_t;
-typedef pair< terminal_t,map<blv_t, int> > tbl_pair;
-
-class TBLCounter {
-  private:
-    tbl_map_t tbl_map;
-  public:
-    void add( terminal_t terminals, blv_t bvector )
-    {
-      tbl_map_t::iterator tbl_finder = tbl_map.find( terminals );
-      if( tbl_finder == tbl_map.end() )
-      {
-        map<blv_t,int> new_map;
-        new_map.insert(blv_int_pair(bvector,1));
-        tbl_map.insert( tbl_pair(terminals,new_map) );
-      }
-      else
-      {
-        map<blv_t,int>& blv_map = tbl_finder->second;
-        map<blv_t,int>::iterator blv_finder = blv_map.find( bvector );
-        if( blv_finder == blv_map.end() ) // should never happen ;)
-        {
-          blv_map.insert( blv_int_pair(bvector,1) );
-        }
-        else
-        {
-          blv_finder->second++;
-        }
-      }
-    }
-    void out()
-    {
-      for( tbl_map_t::iterator i = tbl_map.begin() ; i != tbl_map.end() ; i++ )
-      {
-        for( terminal_t::const_iterator j = i->first.begin() ; j != i->first.end() ; j++ )
-        {
-          if( *j != 0 )
-            cout << " " << *j;
-        }
-        cout << ":" << endl;
-        
-        for( map<blv_t,int>::const_iterator j = i->second.begin() ; j != i->second.end() ; j++ )
-        {
-          for( blv_t::const_iterator k = j->first.begin() ; k != j->first.end() ; k++ )
-            cout << k->second << " ";
-          cout << ": " << j->second << endl;
-        }
-      }
-    }
-    void merge_from( TBLCounter& tblc )
-    {
-      for( tbl_map_t::iterator i = tblc.tbl_map.begin() ; i != tblc.tbl_map.end() ; i++ )
-      {
-        tbl_map_t::iterator tbl_finder = this->tbl_map.find( i->first );
-        if( tbl_finder == this->tbl_map.end() )
-        {
-          this->tbl_map.insert( tbl_pair(i->first,i->second) );
-        }
-        else
-        {
-          for( map<blv_t,int>::const_iterator j = i->second.begin() 
-            ; j != i->second.end() ; j ++ )
-          {
-            map<blv_t,int>::iterator blv_finder = tbl_finder->second.find(j->first);
-            if( blv_finder == tbl_finder->second.end() )
-            {
-              tbl_finder->second.insert( blv_int_pair(j->first,j->second) );
-            }
-            else
-            {
-              blv_finder->second += j->second;
-            }
-          }
-        }
-
-      }
-    }
-};
 
 struct thread_data_t 
 {

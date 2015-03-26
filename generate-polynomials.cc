@@ -13,6 +13,7 @@ ex mul_from_to(ex x, int from, int to) {
 	{
 		rval *= (x+i);
 	}
+	return rval;
 }
 
 int factorial(int n) {
@@ -63,7 +64,8 @@ public:
 	// count non-zero entries
 	pair<int,int> non_zeros_and_twos(const int *dec, int size) {
 		pair<int,int> non_zero_and_two_pair;
-		for( int i = 0 ; i < size ; i++ ) {
+		for( int i = 0 ; i < size ; i++ )
+		 {
 			if( dec[i] ) non_zero_and_two_pair.first++;
 			if( dec[i] == 2) non_zero_and_two_pair.second++;
 		}
@@ -114,18 +116,21 @@ public:
 		iterate_insert(d12[0],12,233);
 	}
 
-	vector< vector<int> >* get_non_zeros_and_twos( pair<int,int> nzat )
+	vector< vector<int> > get_non_zeros_and_twos( pair<int,int> nzat )
 	{
 		dec_map_t::iterator finder = decoration_map.find(nzat);
 		if( finder == decoration_map.end() )
 		{
-			return NULL;
+			vector< vector<int> > v;
+			return v;
 		}
 		else
 		{
-			&(*finder);
+			return (finder->second);
 		}
 	}
+
+	
 };
 
 
@@ -135,5 +140,17 @@ int main(int argc, char const *argv[])
 	symbol s("s");
 	ex r = mul_from_to(s,1,3);
 	cout << r << endl;
+	Decorations d;
+	vector< vector<int> > v = d.get_non_zeros_and_twos(pair<int,int>(4,2));
+	for( vector< vector<int> >::iterator i = v.begin() ; 
+		i != v.end() ; i++ )
+	{
+		for( vector<int>::iterator j = i->begin() ; j != i->end() ; j++ )
+		{
+			cout << *j << " ";
+		}
+		cout << endl;
+	}
+
 	return 0;
 }
