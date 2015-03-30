@@ -1,5 +1,6 @@
 #include <ginac/ginac.h>
 #include "two-decorations.h"
+#include "tbl_counter.h"
 #include <iostream>
 
 using namespace std;
@@ -95,7 +96,8 @@ public:
 			vector<int> decoration;
 			for( int j = 0 ; j < size ; j++ )
 			{
-				decoration.push_back( d[i*size+j] );
+				if( d[i*size+j] != 0 )
+					decoration.push_back( d[i*size+j] );
 			}
 			insert(nzat,decoration);
 		}
@@ -129,7 +131,6 @@ public:
 			return (finder->second);
 		}
 	}
-
 	
 };
 
@@ -137,11 +138,22 @@ public:
 
 int main(int argc, char const *argv[])
 {
+
+	TBLCounter tbl_counter;
+	tbl_counter.readfile( "CHORD-2" );
+	tbl_counter.readfile( "CHORD-3" );
+	tbl_counter.readfile( "CHORD-4" );
+	tbl_counter.readfile( "CHORD-5" );
+	tbl_counter.readfile( "CHORD-6" );
+	tbl_counter.readfile( "CHORD-7" );
+	tbl_counter.readfile( "CHORD-8" );
+	tbl_counter.readfile( "CHORD-9" );	
+	tbl_counter.readfile( "CHORD-10" );	
 	symbol s("s");
 	ex r = mul_from_to(s,1,3);
 	cout << r << endl;
 	Decorations d;
-	vector< vector<int> > v = d.get_non_zeros_and_twos(pair<int,int>(4,2));
+	vector< vector<int> > v = d.get_non_zeros_and_twos(pair<int,int>(5,2));
 	for( vector< vector<int> >::iterator i = v.begin() ; 
 		i != v.end() ; i++ )
 	{
@@ -150,6 +162,24 @@ int main(int argc, char const *argv[])
 			cout << *j << " ";
 		}
 		cout << endl;
+	}
+
+	vector< map<blv_t, int> >  blv_maps = tbl_counter.find_all_branchv_with_size(5);
+	for( vector< map<blv_t, int> >::iterator i = blv_maps.begin() ; i != blv_maps.end() ; i++ )
+	{
+		for( map<blv_t,int>::iterator j = i->begin() ; j != i->end() ; j++ )
+		{
+			vector<int> bvector;
+			for( blv_t::const_iterator k = j->first.begin() ; k != j->first.end() ; k++ )
+			{
+				bvector.push_back(k->second);
+				cout << k->second << " ";
+			}
+
+			cout << " : " << j->second << endl;	
+			ex poly = weight_from_chord(s,bvector,);
+		}
+		
 	}
 
 	return 0;
