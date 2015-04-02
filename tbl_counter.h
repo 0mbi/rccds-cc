@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <map>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -168,6 +170,21 @@ class TBLCounter {
 	    }
 	    infile.close();	
 	}
+
+  vector< map<blv_t, int> > find_all_branchv_with_size( int size )
+  {
+    vector< map<blv_t, int> > rval;
+    for( tbl_map_t::iterator i = tbl_map.begin() ; i != tbl_map.end() ; i++ )
+    {
+      if( i->first.back() == size ) 
+      // the last terminal is always 
+      // the size of a chord diagram
+      {
+        rval.push_back( i->second );
+      }
+    }
+    return rval;
+  }
 
 };
 

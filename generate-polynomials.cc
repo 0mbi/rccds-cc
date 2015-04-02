@@ -177,7 +177,7 @@ int main(int argc, char const *argv[])
 			}
 
 			cout << " : " << j->second << endl;	
-			ex poly = weight_from_chord(s,bvector,);
+			// ex poly = weight_from_chord(s,bvector,);
 		}
 		
 	}
